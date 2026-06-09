@@ -177,81 +177,118 @@ p.desc {
     color: #ccc;
     cursor: not-allowed;
 }
-/*CONFIGURAÇÕES DE RESPONSIVIDADE (MOBILE FIRST & BREAKPOINTS)*/
-/* 1. Telas de Smartphones Pequenos (320px x 480px - ex: iPhone SE antigo) */
-@media (max-width: 320px) {
+/* ======================================================== */
+/* CONFIGURAÇÕES DE RESPONSIVIDADE (MOBILE FIRST & OTIMIZADO)*/
+/* ======================================================== */
+/* 1. Telas de Celulares (Até 480px - Unificado) */
+@media (max-width: 480px) {
     body {
-        overflow-y: auto; /* Permite rolagem se o conteúdo for maior que a tela */
-        align-items: flex-start; /* Alinha no topo para não cortar o título */
-        padding-top: 20px;
+        overflow-y: auto; 
+        overflow-x: hidden; /* Trava rolagem lateral no fundo */
+        align-items: flex-start;
+        padding-top: 10px;
     }
+
+    /* Caixa de Login */
     .login-box {
-        padding: 20px 15px; /* Reduz o respiro interno */
-        width: 95%;
+        padding: 20px 15px;
+        width: 100%;
+        max-width: 95%;
         border-radius: 10px;
+        box-sizing: border-box;
     }
-    h2 {
-        font-size: 1.2rem;
-        letter-spacing: 1px;
+    h2 { font-size: 1.1rem; letter-spacing: 0.5px; }
+    p.desc { font-size: 12px; }
+    .btn-entrar { padding: 12px; font-size: 13px; width: 100%; }
+
+    /* Empilhamento de Campos (Login e Painel) */
+    .row, .filtros, .filtros-container, .relatorio-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100%;
+        gap: 10px;
+        box-sizing: border-box;
     }
-    .row {
-        flex-direction: column; /* Força campos lado a lado a ficarem um sobre o outro */
-        gap: 0;
+    
+    /* Inputs a 100% da tela */
+    input, select, textarea {
+        width: 100% !important;
+        box-sizing: border-box;
+        margin: 0 !important;
     }
-    .btn-entrar {
-        padding: 12px;
-        font-size: 13px;
+
+    /* Cabeçalho do Painel Centralizado */
+    .header-painel, header, .topo {
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Tabela com Scroll Lateral (Não quebra o layout) */
+    .tabela-container {
+        width: 100% !important;
+        overflow-x: auto !important;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #eee;
+    }
+    table, .dash-table { min-width: 600px !important; }
+
+    /* Ajuste do Menu Lateral para o Topo (Libera espaço do Painel) */
+    body, .dashboard-container, .container {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .sidebar, .menu-lateral {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        padding: 15px 10px !important;
+        flex-direction: row !important;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .main-content, .conteudo-principal {
+        width: 100% !important;
+        padding: 10px !important;
+        margin-left: 0 !important; /* Remove a margem do menu desktop */
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 }
-/* 2. Telas de Smartphones Médios/Grandes (Até 480px) */
-@media (min-width: 321px) and (max-width: 480px) {
-    .login-box {
-        padding: 25px 20px;
-        width: 90%;
-    }
-    .row {
-        flex-direction: column; /* Empilha os campos (ex: Nome e Sobrenome) */
-        gap: 0;
-    }   
-    p.desc {
-        font-size: 12px;
-    }
-}
-/* 3. Tablets e iPads (768px x 1024px) */
+
+/* 2. Tablets e iPads (481px a 1024px) */
 @media (min-width: 481px) and (max-width: 1024px) {
     .login-box {
-        max-width: 400px; /* Ajuste equilibrado para o centro da tela */
+        max-width: 400px; 
         padding: 30px;
+        margin: 0 auto;
     }
-    /* Aqui o .row pode voltar a ser flex para campos lado a lado */
-    .row {
-        flex-direction: row;
-        gap: 15px;
-    }
+    .row { flex-direction: row; gap: 15px; }
 }
-/* 4. Telas Desktop Standard (1280x720) e Full HD (1920x1080) */
+
+/* 3. Telas Desktop (1025px+) */
 @media (min-width: 1025px) {
     .login-box {
-        max-width: 480px; /* Mantém sua configuração original */
+        max-width: 480px; 
         transition: transform 0.3s ease;
+        margin: 0 auto;
     }
-    /* Efeito visual apenas para desktop */
-    .login-box:hover {
-        border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-    /* Garante que em telas muito altas o box não fique "esticado" */
-    body {
-        overflow: hidden; 
-    }
+    .login-box:hover { border: 1px solid rgba(255, 255, 255, 0.4); }
+    body { overflow: hidden; }
 }
-/* AJUSTE PARA ORIENTAÇÃO LANDSCAPE (Celular deitado) */
+
+/* 4. Celular Deitado (Landscape) */
 @media (max-height: 500px) {
-    body {
+body {
         align-items: flex-start;
         overflow-y: auto;
         padding: 20px 0;
     }
-    .login-box {
-        max-height: none;
-    }
+    .login-box { max-height: none; }
 }
