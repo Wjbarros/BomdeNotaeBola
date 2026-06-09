@@ -10,9 +10,9 @@ const assets = [
   '/Imagens/Capa.jpg',
   '/Imagens/Fundo_Tela.png',
   '/Imagens/Banner.png',
+  '/Imagens/icon-192.png',
+  '/Imagens/icon-512.png',
 ];
-
-// Instalação e Cache dos arquivos
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -20,8 +20,6 @@ self.addEventListener('install', event => {
     })
   );
 });
-
-// Resposta mesmo em modo Offline
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
