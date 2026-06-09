@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bom-de-nota-v1';
+const CACHE_NAME = 'bom-de-nota-v2';
 const assets = [
   '/',
   '/index.html',
