@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha | Jogador Bom de Nota</title>    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">   
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.js"></script>
+    <script>
+       (function(){
+          emailjs.init("SQFddEhUuZknJPm7j"); 
+       })();
+    </script>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="login-box">
+        <h2>RECUPERAR SENHA</h2>
+        <p class="desc">Insira seu e-mail cadastrado para receber as instruções de redefinição.</p>
+        
+        <form id="recoverForm">
+            <div class="input-group">
+                <label>E-mail</label>
+                <input type="email" id="email-recuperar" placeholder="exemplo@email.com.br" required>
+            </div>
+
+            <button type="submit" class="btn-entrar">ENVIAR LINK</button>
+            
+            <div class="create-account">
+                <a href="index.html">Lembrei a senha? Voltar ao Login</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("PWA de Recuperação Ativo"))
+            .catch(err => console.log("Erro PWA", err));
+        }
+        
+        // Integração Real de Envio de E-mail com a Solução 2
+        document.getElementById('recoverForm').addEventListener('submit', function(e) {
+            e.preventDefault();           
+            const emailRecuperar = document.getElementById('email-recuperar').value.trim();
+            const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            
+            // Validação (RF11 - Controle de Acesso) buscando no LocalStorage
+            const usuarioExiste = usuarios.find(u => u.email.toLowerCase() === emailRecuperar.toLowerCase());
+            
+            if (usuarioExiste) {
+                // 1. Criptografa o e-mail em Base64 para passar na URL de forma segura e limpa
+                const emailCriptografado = btoa(usuarioExiste.email);              
+                
+                // 2. Descobre dinamicamente a rota atual para encontrar o arquivo nova-senha.html
+                const urlLocal = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+                const linkRecuperar = `${urlLocal}/nova-senha.html?id=${emailCriptografado}`;
+                
+                // 3. CORREÇÃO: Chave remapeada para 'link_redefinicao' para casar com o painel do EmailJS
+                const parametrosEmail = {
+                    to_email: usuarioExiste.email,
+                    to_name: usuarioExiste.nome || "Usuário",
+                    link_redefinicao: linkRecuperar // Alterado aqui de link_recuperar para link_redefinicao
+                };
+                
+                alert("Processando requisição de envio... Por favor, aguarde.");
+                
+                // 4. Dispara o e-mail através da API para o e-mail do usuário
+                emailjs.send('service_fcnphbm', 'template_h9hymnc', parametrosEmail)
+                    .then(function() {
+                        alert(`Sucesso! Um link de redefinição real foi enviado para o e-mail: ${usuarioExiste.email}`);
+                        window.location.href = 'index.html';
+                    }, function(error) {
+                        alert("Falha ao processar o disparo do e-mail. Verifique se possui conexão ativa com a internet.");
+                        console.error("Erro detalhado EmailJS:", error);
+                    });
+
+            } else {
+                alert("E-mail não encontrado no sistema.");
+            }
+        });
+    </script>
+</body>
+</html>

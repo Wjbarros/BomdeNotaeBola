@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro | Jogador Bom de Nota</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="login-box">
+        <h2>CRIAR CONTA</h2>
+        <p class="desc">Preencha os dados para acessar o sistema!</p>
+        
+        <form id="cadastroForm">
+            <div class="input-group">
+                <label>Nome Completo</label>
+                <input type="text" placeholder="Seu nome completo" required>
+            </div>
+
+            <div class="input-group">
+                <label>E-mail</label>
+                <input type="email" placeholder="exemplo@email.com.br" required>
+            </div>
+
+            <div class="input-group">
+                <label>Cargo</label>
+                <input type="text" placeholder="Ex: Professor, Coordenador..." required>
+            </div>
+
+            <div class="input-group">
+                <label>Escola</label>
+                <input type="text" placeholder="Nome da Unidade Educacional" required>
+            </div>
+
+            <div class="row">
+                <div class="input-group">
+                    <label>Idade</label>
+                    <input type="number" placeholder="00" required>
+                </div>
+                <div class="input-group">
+                    <label>Sexo</label>
+                    <select required>
+                        <option value="" disabled selected>Selecione</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="senha" placeholder="••••••••" required>
+                    <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePassword('senha', this)"></i>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirma-senha" placeholder="••••••••" required>
+                    <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePassword('confirma-senha', this)"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-entrar">CADASTRAR</button>
+            
+            <div class="create-account">
+                <a href="index.html">Já possui cadastro? Voltar ao Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Função corrigida para mostrar/esconder senha
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            
+            if (input.type === "password") {
+                input.type = "text";
+                // Se a senha está visível, mostra o olho sem risco
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                input.type = "password";
+                // Se a senha está oculta, mostra o olho com risco
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+        }
+
+        // Registro do Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("PWA Ativo"))
+            .catch(err => console.log("Erro PWA", err));
+        }
+        document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Captura os valores
+        const nome = this.querySelectorAll('input')[0].value;
+        const email = this.querySelectorAll('input')[1].value;
+        const cargo = this.querySelectorAll('input')[2].value;
+        const escola = this.querySelectorAll('input')[3].value;
+        const idade = this.querySelectorAll('input')[4].value;
+        const sexo = this.querySelector('select').value;
+        const senha = document.getElementById('senha').value;
+        const confirmaSenha = document.getElementById('confirma-senha').value;
+
+        // Validação de Senha (RF02)
+        if (senha !== confirmaSenha) {
+            alert("As senhas não coincidem!");
+            return;
+        }
+
+        // Criar objeto do usuário
+        const novoUsuario = { nome, email, cargo, escola, idade, sexo, senha };
+
+        // Buscar usuários já existentes ou criar lista vazia
+        let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+        // Verificar se e-mail já existe
+        if (usuarios.find(u => u.email === email)) {
+            alert("Este e-mail já está cadastrado!");
+            return;
+        }
+
+        // Salvar
+        usuarios.push(novoUsuario);
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+        alert("Cadastro realizado com sucesso!");
+        window.location.href = 'index.html'; // Redireciona para o login
+        });    
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Senha | Jogador Bom de Nota</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="login-box">
+        <h2>REDEFINIR SENHA</h2>
+        <p class="desc">Crie uma nova senha segura para acessar o seu painel.</p>
+        
+        <form id="novaSenhaForm">
+            <div class="input-group">
+                <label>Nova Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="nova-senha" placeholder="••••••••" required>
+                    <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePassword('nova-senha', this)"></i>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar Nova Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirma-nova-senha" placeholder="••••••••" required>
+                    <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePassword('confirma-nova-senha', this)"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-entrar">ATUALIZAR SENHA</button>
+        </form>
+    </div>
+
+    <script>
+        // Variável global para armazenar o e-mail de quem clicou no link
+        let emailUsuarioAlvo = "";
+
+        // Captura o parâmetro da URL assim que a página carrega
+        window.onload = function() {
+            const parametros = new URLSearchParams(window.location.search);
+            const idCriptografado = parametros.get('id');
+
+            if (!idCriptografado) {
+                alert("Link de redefinição inválido ou expirado!");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                // Descodifica o e-mail vindo da URL (Base64)
+                emailUsuarioAlvo = atob(idCriptografado).trim();
+                
+                // Opcional: Adiciona visualmente para quem está alterando
+                const descTexto = document.querySelector('.desc');
+                if (descTexto) {
+                    descTexto.innerHTML = `Defina uma nova senha para o acesso de:<br><strong>${emailUsuarioAlvo}</strong>`;
+                }
+            } catch (error) {
+                alert("Erro ao ler os dados de recuperação. Solicite um novo link.");
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Função de mostrar/esconder senha (sua lógica original mantida)
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            }
+        }
+        document.getElementById('novaSenhaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const senha = document.getElementById('nova-senha').value;
+            const confirma = document.getElementById('confirma-nova-senha').value;
+            if (senha.length < 6) {
+                alert("A nova senha deve conter no mínimo 6 caracteres!");
+                return;
+            }
+
+            if (senha !== confirma) {
+                alert("As senhas não coincidem!");
+                return;
+            }
+            let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+            const indexUsuario = usuarios.findIndex(u => u.email.toLowerCase() === emailUsuarioAlvo.toLowerCase());
+
+            if (indexUsuario !== -1) {
+                usuarios[indexUsuario].senha = senha;
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));               
+                alert("Senha atualizada com sucesso! Use suas novas credenciais para acessar o painel.");
+                window.location.href = 'index.html';
+            } else {
+                alert("Erro: Este usuário não está mais cadastrado localmente neste dispositivo.");
+            }
+        });
+    </script>
+</body>
+</html>
